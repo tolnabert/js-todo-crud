@@ -8,16 +8,11 @@ app.use(express.json());
 const PORT = 3000;
 
 const readTodos = () => {
-  try {
-    const data = fs.readFileSync('todos.json');
-    console.log("readtodos data: " + data);
-    
-    return JSON.parse(data);
-  } catch (error) {
+  const data = fs.readFileSync('todos.json');
 
-    console.error("catch error " + error);
-    return [];
-  }
+  if (data.length === 0) return []; //.length might be not enough
+
+  return JSON.parse(data);
 };
 
 const writeTodos = (todos) => {
