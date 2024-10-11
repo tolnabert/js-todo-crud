@@ -1,45 +1,61 @@
-const express = require('express');
-const fs = require('fs');
+import express, { json } from 'express';
+import { promises as fs } from 'fs';
 
 const app = express();
-
-app.use(express.json());
-
 const PORT = 3000;
 
-const readTodos = () => {
-  const data = fs.readFileSync('todos.json');
+app.use(json());
 
-  if (data.length === 0) return []; //.length might be not enough
-
-  return JSON.parse(data);
+const readTodos = async () => {
+  try {
+    const data = await fs.readFile('todos.json', 'utf8');
+    if (!data) return [];
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
 };
 
-const writeTodos = (todos) => {
-  fs.writeFileSync('todos.json', JSON.stringify(todos), null, 2);
+const writeTodos = async (todos) => {
+  try {
+    await fs.writeFile('todos.json', JSON.stringify(todos, null, 2));
+  } catch (error) {
+    throw error;
+  }
 };
 
-const getHighestId = (todos) => {
+const getNextId = (todos) => {
   if (todos.length === 0) return 1;
-  return Math.max(...todos.map((todo) => todo.id));
+  return Math.max(...todos.map((todo) => todo.id)) + 1;
 };
 
-app.get('/todos', (req, res) => {
-  const todos = readTodos();
-  res.json(todos);
+app.get('/todos', async (req, res) => {
+  try {
+    const todos = await readTodos();
+    res.json(todos);
+  } catch (error) {
+    res.status(500).json({ message: 'Error reading todos', error });
+  }
 });
 
-app.post('/todos', (req, res) => {
-  const newTodo = req.body;
-  const todos = readTodos();
+app.post('/todos', async (req, res) => {
+  try {
+    const newTodo = req.body;
+    const todos = await readTodos();
 
-  const highestId = getHighestId(todos);
+    const nextId = getNextId(todos);
+    newTodo.id = nextId;
 
-  newTodo.id = highestId;
+    const updatedTodos = [...todos, newTodo];
+    await writeTodos(updatedTodos);
 
-  const updatedTodos = [...todos, newTodo];
-  writeTodos(updatedTodos);
-  res.status(201).json({ message: 'added todo', newTodo: newTodo });
+    res.status(201).json({ message: 'Added todo', newTodo });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding todo', error });
+  }
 });
 
 app.listen(PORT, () => {
