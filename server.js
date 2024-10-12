@@ -35,9 +35,27 @@ const getNextId = (todos) => {
 app.get('/todos', async (req, res) => {
   try {
     const todos = await readTodos();
-    res.json(todos);
+    return res.json(todos);
   } catch (error) {
-    res.status(500).json({ message: 'Error reading todos', error });
+    return res.status(500).json({ message: 'Error reading todos', error });
+  }
+});
+
+app.get('/todos/:id', async (req, res) => {
+  try {
+    const todoId = parseInt(req.params.id, 10);
+    const todos = await readTodos();
+
+    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+
+    if (todoIndex === -1) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+
+    const todoToFind = todos[todoIndex];
+    return res.status(200).json(todoToFind);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error reading todos', error });
   }
 });
 
@@ -52,9 +70,53 @@ app.post('/todos', async (req, res) => {
     const updatedTodos = [...todos, newTodo];
     await writeTodos(updatedTodos);
 
-    res.status(201).json({ message: 'Added todo', newTodo });
+    return res.status(201).json({ message: 'Added todo', newTodo });
   } catch (error) {
-    res.status(500).json({ message: 'Error adding todo', error });
+    return res.status(500).json({ message: 'Error adding todo', error });
+  }
+});
+
+app.delete('/todos/:id', async (req, res) => {
+  try {
+    const todoId = parseInt(req.params.id, 10);
+    const todos = await readTodos();
+    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+
+    if (todoIndex === -1) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+
+    todos.splice(todoIndex, 1);
+    await writeTodos(todos);
+
+    return res.status(200).json({ message: 'Todo deleted', todos: todos });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error deleting todo', error });
+  }
+});
+
+app.put('/todos/:id', async (req, res) => {
+  try {
+    const todoId = parseInt(req.params.id, 10);
+    const updatedData = req.body;
+    const todos = await readTodos();
+
+    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+
+    if (todoIndex === -1) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+
+    todos[todoIndex] = { ...todos[todoIndex], ...updatedData };
+
+    await writeTodos(todos);
+
+    return res
+      .status(200)
+      .json({ message: 'Todo updated', todo: todos[todoIndex] });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error updating todo', error });
+
   }
 });
 
