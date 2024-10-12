@@ -43,13 +43,21 @@ async function addTodo(title,description) {
 // })();
 
 async function findTodo(id) {
-  const response = await fetch('http://localhost:3000/todos:'+id)
-  console.log("findTodo response:", response);
+  try {
+    const response = await fetch('http://localhost:3000/todos/'+id)
+    console.log("response.status",response.status);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+  
 }
 //TEST FindTodo()
 (async () => {
   const responseMessage = await findTodo(Math.ceil(Math.random()*8));
-  console.log("A szerver válasza: ", responseMessage);
+  console.log("The server's response: ", responseMessage);
 })();
 
 
