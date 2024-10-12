@@ -70,18 +70,53 @@ async function deleteTodo(id) {
   }
 }
 //TEST deleteTodo()
-(async () => {
-  const responseMessage = await deleteTodo(Math.ceil(Math.random() * 5));
-  console.log("The server's response: ", responseMessage);
-})();
+// (async () => {
+//   const responseMessage = await deleteTodo(Math.ceil(Math.random() * 5));
+//   console.log("The server's response: ", responseMessage);
+// })();
 
-// fetch('http://localhost:3000/todos', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify({
-//     title: 'newtodo_title-2',
-//     description: 'newtodo_description-2',
-//   }),
-// });
+async function updateTodo(id,title, description) {
+  if((title === null||title === undefined) && description === undefined){
+    console.warn('Please add at least one new value for "title" or "description!"');
+    return;
+  }
+  const dataToUpdate = {};
+    if(title){dataToUpdate.title = title;};
+    if(description){dataToUpdate.description = description;};
+  console.log("dataToUpdate:",dataToUpdate)
+  try {
+    
+    const response = await fetch("http://localhost:3000/todos/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToUpdate),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+}
+//TEST updateTodo()
+// (async () => {
+//   const responseMessage = await updateTodo(2,'Being sad','Muaahhh...');
+//   console.log("The server's response: ", responseMessage);
+// })();
+// no arguments:
+// (async () => {
+//   const responseMessage = await updateTodo(4);
+//   console.log("The server's response: ", responseMessage);
+// })();
+// only title argument
+// (async () => {
+//   const responseMessage = await updateTodo(4,'the description stays untouched');
+//   console.log("The server's response: ", responseMessage);
+// })();
+// only description argument
+// (async () => {
+//   const responseMessage = await updateTodo(5,null,'the title stays untouched');
+//   console.log("The server's response: ", responseMessage);
+// })();
