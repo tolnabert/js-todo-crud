@@ -116,6 +116,7 @@ app.put('/todos/:id', async (req, res) => {
       .json({ message: 'Todo updated', todo: todos[todoIndex] });
   } catch (error) {
     return res.status(500).json({ message: 'Error updating todo', error });
+
   }
 });
 
