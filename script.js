@@ -24,7 +24,7 @@ function todoLister(data) {
 
     const todoListItems = data.map(todo => {
         const toDoLi = new Component('li',{id:`todo-li-${todo.id}`,class:"todo-list"}).node;
-        const delBtn = new Component('button',{class:"delete-button",title:"delete"},[document.createTextNode("X")],{"click":()=>{root.removeChild(toDoLi)}}).node;
+        const delBtn = new Component('button',{class:"delete-button",title:"delete"},[document.createTextNode("-")],{"click":()=>{root.removeChild(toDoLi)}}).node;
         const toDoTitle = new Component('span',{class:"bold"},[document.createTextNode(todo.title)]).node;
         toDoLi.append(
             toDoTitle,
