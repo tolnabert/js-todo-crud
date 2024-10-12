@@ -35,7 +35,25 @@ const getNextId = (todos) => {
 app.get('/todos', async (req, res) => {
   try {
     const todos = await readTodos();
-    return res.json(todos);
+    const { title } = req.query;
+    const filteredTodos = title
+      ? todos.filter((todo) =>
+          todo.title.toLowerCase().includes(title.toLowerCase())
+        )
+      : todos;
+
+    const { sortBy, sortOrder } = req.query;
+
+    const order = sortOrder === 'desc' ? -1 : 1;
+
+    if (sortBy === 'title') {
+      filteredTodos.sort((a, b) => {
+        return a.title.localeCompare(b.title) * order;
+      });
+    }
+
+    return res.json(filteredTodos);
+
   } catch (error) {
     return res.status(500).json({ message: 'Error reading todos', error });
   }
