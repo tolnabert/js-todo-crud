@@ -16,21 +16,20 @@ async function listTodos() {
 //   console.warn("VAN-E?", todos);
 // })();
 
-async function addTodo(title,description) {
+async function addTodo(title, description) {
   try {
-    const response = await fetch('http://localhost:3000/todos', {
-      method: 'POST',
+    const response = await fetch("http://localhost:3000/todos", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         title: title,
         description: description,
       }),
     });
-    const result = await response.json();  
+    const result = await response.json();
     return result;
-    
   } catch (error) {
     console.error(error.message);
     return error.message;
@@ -44,22 +43,37 @@ async function addTodo(title,description) {
 
 async function findTodo(id) {
   try {
-    const response = await fetch('http://localhost:3000/todos/'+id)
-    console.log("response.status",response.status);
+    const response = await fetch("http://localhost:3000/todos/" + id);
+    console.log("response.status", response.status);
     const result = await response.json();
     return result;
   } catch (error) {
     console.error(error.message);
     return error.message;
   }
-  
 }
-//TEST FindTodo()
+//TEST findTodo()
+// (async () => {
+//   const responseMessage = await findTodo(Math.ceil(Math.random() * 8));
+//   console.log("The server's response: ", responseMessage);
+// })();
+
+async function deleteTodo(id) {
+  try {
+    const response = await fetch("http://localhost:3000/todos/" + id, {
+      method: "DELETE"
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+//TEST deleteTodo()
 (async () => {
-  const responseMessage = await findTodo(Math.ceil(Math.random()*8));
+  const responseMessage = await deleteTodo(Math.ceil(Math.random() * 5));
   console.log("The server's response: ", responseMessage);
 })();
-
 
 // fetch('http://localhost:3000/todos', {
 //   method: 'POST',
