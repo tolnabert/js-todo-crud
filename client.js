@@ -10,34 +10,48 @@ async function listTodos() {
   }
   return await fetchTodos();
 }
-//TEST
+//TEST listTodos()
+// (async () => {
+//   const todos = await listTodos();
+//   console.warn("VAN-E?", todos);
+// })();
+
+async function addTodo(title,description) {
+  try {
+    const response = await fetch('http://localhost:3000/todos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: title,
+        description: description,
+      }),
+    });
+    const result = await response.json();  
+    return result;
+    
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+}
+//TEST addTodo()
+// (async () => {
+//   const responseMessage = await addTodo("do nothing","Is's gonna take a lot of time");
+//   console.log("A szerver válasza: ", responseMessage);
+// })();
+
+async function findTodo(id) {
+  const response = await fetch('http://localhost:3000/todos:'+id)
+  console.log("findTodo response:", response);
+}
+//TEST FindTodo()
 (async () => {
-  const todos = await listTodos();
-  console.warn("VAN-E?", todos);
+  const responseMessage = await findTodo(Math.ceil(Math.random()*8));
+  console.log("A szerver válasza: ", responseMessage);
 })();
 
-// function listTodos(){
-// fetch('http://localhost:3000/todos')
-//   .then((response) => response.json())
-//   .then((data) => {
-//     console.log(data);
-//     return data;
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
-// }
-
-// fetch('http://localhost:3000/todos', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify({
-//     title: 'newtodo_title',
-//     description: 'newtodo_description',
-//   }),
-// });
 
 // fetch('http://localhost:3000/todos', {
 //   method: 'POST',
