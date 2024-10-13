@@ -120,3 +120,57 @@ async function updateTodo(id,title, description) {
 //   const responseMessage = await updateTodo(5,null,'the title stays untouched');
 //   console.log("The server's response: ", responseMessage);
 // })();
+
+async function findTodoBy(propertyName,propertyValue) {
+  if(!propertyName||!propertyValue){
+    console.warn('Please add a property name and a property value!');
+    return;
+  }
+  const query = new URLSearchParams();    
+    query.append(propertyName,propertyValue);
+    
+    const URL = `http://localhost:3000/todos/${propertyName === 'id'? propertyValue :'?'+query.toString()}`;
+  try {
+    const response = await fetch(URL);
+    console.log("response.status", response.status);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+}
+//TEST findTodoBy
+  // find by ID
+// (async () => {
+//   const responseMessage = await findTodoBy('id',2);
+//   console.log("The server's response: ", responseMessage);
+// })();
+  // find by title
+// (async () => {
+//   const responseMessage = await findTodoBy('title',"original title");
+//   console.log("The server's response: ", responseMessage);
+// })();
+
+async function sortTodoBy(sortBy, sortOrder = 'asc') {
+ 
+  const query = new URLSearchParams();
+      query.append('sortBy',sortBy);
+      query.append('sortOrder',sortOrder);
+    const url = `http://localhost:3000/todos/?${query.toString()}`;
+    console.log(url);
+  try {
+    const response = await fetch(url);
+    console.log("response.status", response.status);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+}
+// test sortTodoBy()
+// (async () => {
+// const responseMessage = await sortTodoBy('title',"desc");
+// console.log("The server's response: ", responseMessage);
+// })();
