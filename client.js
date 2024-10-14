@@ -1,14 +1,12 @@
 export async function listTodos() {
-  async function fetchTodos() {
     try {
       const response = await fetch("http://localhost:3000/todos");
-      return await response.json();
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error(error);
       return error.message;
-    }
-  }
-  return await fetchTodos();
+    }  
 }
 
 export async function addTodo(title, description) {

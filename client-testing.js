@@ -3,7 +3,7 @@ import { listTodos,addTodo,findTodo,deleteTodo,findTodoBy,updateTodo,sortTodoBy 
 //TEST listTodos()
 (async () => {
   const todos = await listTodos();
-  console.warn(todos.message, todos);
+  console.warn("LIST TODOS:\n",todos.message, todos);
 })();
 
 //TEST addTodo()
